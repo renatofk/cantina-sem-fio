@@ -1,0 +1,85 @@
+{% include "django/forms/widgets/input.html" %}
+<button type="button" class="camera-button button button-secondary" style="margin-left: 10px;" 
+        onclick="openCamera('{{ widget.attrs.id }}')">
+    Capturar com a câmera
+</button>
+
+<script>
+    function openCamera(inputId) {
+        // Criar elementos UI
+        const modal = document.createElement('div');
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.backgroundColor = 'rgba(0,0,0,0.9)';
+        modal.style.zIndex = '10000';
+        modal.style.display = 'flex';
+        modal.style.flexDirection = 'column';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        
+        const video = document.createElement('video');
+        video.autoplay = true;
+        video.style.maxWidth = '90%';
+        video.style.maxHeight = '70vh';
+        video.style.marginBottom = '20px';
+        
+        const buttonsDiv = document.createElement('div');
+        const captureBtn = document.createElement('button');
+        captureBtn.textContent = 'Capturar';
+        captureBtn.className = 'button';
+        
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = 'Cancelar';
+        cancelBtn.className = 'button button-secondary';
+        cancelBtn.style.marginLeft = '10px';
+        
+        buttonsDiv.appendChild(captureBtn);
+        buttonsDiv.appendChild(cancelBtn);
+        
+        modal.appendChild(video);
+        modal.appendChild(buttonsDiv);
+        document.body.appendChild(modal);
+        
+        // Iniciar câmera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                video.srcObject = stream;
+                
+                captureBtn.addEventListener('click', function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(video, 0, 0);
+                    
+                    canvas.toBlob(function(blob) {
+                        const fileInput = document.getElementById(inputId);
+                        const file = new File([blob], 'camera_capture_' + Date.now() + '.jpg', { type: 'image/jpeg' });
+                        
+                        const dt = new DataTransfer();
+                        dt.items.add(file);
+                        fileInput.files = dt.files;
+                        
+                        // Disparar evento change
+                        fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+                        
+                        // Limpar e fechar
+                        stream.getTracks().forEach(track => track.stop());
+                        document.body.removeChild(modal);
+                    }, 'image/jpeg', 0.9);
+                });
+                
+                cancelBtn.addEventListener('click', function() {
+                    stream.getTracks().forEach(track => track.stop());
+                    document.body.removeChild(modal);
+                });
+            })
+            .catch(function(err) {
+                alert('Erro ao acessar a câmera: ' + err.message);
+                document.body.removeChild(modal);
+            });
+    }
+</script>

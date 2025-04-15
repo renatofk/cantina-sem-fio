@@ -1,0 +1,117 @@
+{% extends "wagtailimages/multiple/add.html" %}
+{% load wagtailadmin_tags %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Adicionar botão de câmera ao formulário
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(function(input) {
+            const cameraButton = document.createElement('button');
+            cameraButton.type = 'button';
+            cameraButton.className = 'button button-secondary';
+            cameraButton.innerHTML = '{% icon name="camera" %} Capturar Foto';
+            cameraButton.style.marginLeft = '10px';
+            
+            cameraButton.addEventListener('click', function() {
+                // Verificar suporte à câmera
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    alert('Seu navegador não suporta acesso à câmera');
+                    return;
+                }
+                
+                // Criar elementos para captura de câmera
+                const videoModal = document.createElement('div');
+                videoModal.className = 'camera-modal';
+                videoModal.style.position = 'fixed';
+                videoModal.style.top = '0';
+                videoModal.style.left = '0';
+                videoModal.style.width = '100%';
+                videoModal.style.height = '100%';
+                videoModal.style.backgroundColor = 'rgba(0,0,0,0.8)';
+                videoModal.style.zIndex = '9999';
+                videoModal.style.display = 'flex';
+                videoModal.style.flexDirection = 'column';
+                videoModal.style.alignItems = 'center';
+                videoModal.style.justifyContent = 'center';
+                
+                const video = document.createElement('video');
+                video.style.maxWidth = '100%';
+                video.style.maxHeight = '70vh';
+                video.style.marginBottom = '20px';
+                video.autoplay = true;
+                
+                const buttonContainer = document.createElement('div');
+                
+                const captureButton = document.createElement('button');
+                captureButton.type = 'button';
+                captureButton.className = 'button';
+                captureButton.textContent = 'Capturar';
+                captureButton.style.marginRight = '10px';
+                
+                const cancelButton = document.createElement('button');
+                cancelButton.type = 'button';
+                cancelButton.className = 'button button-secondary';
+                cancelButton.textContent = 'Cancelar';
+                
+                buttonContainer.appendChild(captureButton);
+                buttonContainer.appendChild(cancelButton);
+                
+                videoModal.appendChild(video);
+                videoModal.appendChild(buttonContainer);
+                
+                document.body.appendChild(videoModal);
+                
+                // Iniciar stream de vídeo
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function(stream) {
+                        video.srcObject = stream;
+                        
+                        // Quando clicar em capturar
+                        captureButton.addEventListener('click', function() {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = video.videoWidth;
+                            canvas.height = video.videoHeight;
+                            const context = canvas.getContext('2d');
+                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            
+                            // Converter para blob
+                            canvas.toBlob(function(blob) {
+                                // Criar um arquivo a partir do blob
+                                const fileName = 'photo_' + new Date().getTime() + '.jpg';
+                                const file = new File([blob], fileName, { type: 'image/jpeg' });
+                                
+                                // Criar um DataTransfer para simular um evento de drag-and-drop
+                                const dataTransfer = new DataTransfer();
+                                dataTransfer.items.add(file);
+                                input.files = dataTransfer.files;
+                                
+                                // Disparar evento de mudança para que o Wagtail reconheça o arquivo
+                                const event = new Event('change', { bubbles: true });
+                                input.dispatchEvent(event);
+                                
+                                // Parar stream e fechar modal
+                                stream.getTracks().forEach(track => track.stop());
+                                document.body.removeChild(videoModal);
+                            }, 'image/jpeg', 0.95);
+                        });
+                        
+                        // Quando clicar em cancelar
+                        cancelButton.addEventListener('click', function() {
+                            stream.getTracks().forEach(track => track.stop());
+                            document.body.removeChild(videoModal);
+                        });
+                    })
+                    .catch(function(error) {
+                        alert('Erro ao acessar a câmera: ' + error.message);
+                        document.body.removeChild(videoModal);
+                    });
+            });
+            
+            // Adicionar botão após o input
+            input.parentNode.insertBefore(cameraButton, input.nextSibling);
+        });
+    });
+</script>
+{% endblock %}
