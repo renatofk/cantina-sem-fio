@@ -1,0 +1,15 @@
+/* Muda a cor da barra lateral (menu) */
+/* .sidebar-loading__inner, .sidebar__inner {
+    background-color: #2E7D32 !important;  
+} */
+
+/* Muda a cor da barra superior */
+.sidebar-footer{
+    background-color: #2E7D32 !important;  
+}
+
+/* Cor dos ícones e textos */
+.wagtail-admin .sidebar a,
+.wagtail-admin .sidebar span {
+    color: #fff !important;
+}
