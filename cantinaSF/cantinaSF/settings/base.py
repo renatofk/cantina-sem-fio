@@ -20,6 +20,16 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://cantinasemfila.com.br',
+    'https://www.cantinasemfila.com.br',  # Se usar o www também
+]
+
+ALLOWED_HOSTS = [
+    'cantinasemfila.com.br',
+    'www.cantinasemfila.com.br',
+    '147.182.136.145',  # opcionalmente, se acessar via IP
+]
 
 # Application definition
 
@@ -47,6 +57,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'wagtail_modeladmin',
     "cantinaSF",
+    'sslserver',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -86,16 +98,7 @@ WSGI_APPLICATION = "cantinaSF.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME", "cantinaSF"),
-        "USER": os.getenv("DB_USER", "postgres"),
-        "PASSWORD": os.getenv("DB_PASSWORD", "root"),
-        "HOST": os.getenv("DB_HOST", "localhost"),
-        "PORT": os.getenv("DB_PORT", "5432"),
-    }
-}
+
 
 
 # Password validation
