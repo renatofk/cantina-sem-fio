@@ -28,6 +28,7 @@ CSRF_TRUSTED_ORIGINS = [
 ALLOWED_HOSTS = [
     'cantinasemfila.com.br',
     'www.cantinasemfila.com.br',
+    'portal.cantinasemfila.com.br',  # URL do admin
     '147.182.136.145',  # opcionalmente, se acessar via IP
 ]
 
@@ -183,7 +184,7 @@ WAGTAILSEARCH_BACKENDS = {
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
-WAGTAILADMIN_BASE_URL = "http://example.com"
+WAGTAILADMIN_BASE_URL = "https://portal.cantinasemfila.com.br"
 
 # Allowed file extensions for documents in the document library.
 # This can be omitted to allow all files, but note that this may present a security risk
