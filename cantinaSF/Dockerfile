@@ -12,7 +12,14 @@ EXPOSE 8000
 # 2. Set PORT variable that is used by Gunicorn. This should match "EXPOSE"
 #    command.
 ENV PYTHONUNBUFFERED=1 \
-    PORT=8000
+    PORT=8000 \
+    # Set the Django settings module to use.
+    DJANGO_SETTINGS_MODULE=cantinaSF.settings \
+    DB_NAME=cantinaSF \
+    DB_USER=postgres \
+    DB_PASSWORD=root \
+    DB_HOST=localhost \
+    DB_PORT=5432 
 
 # Install system packages required by Wagtail and Django.
 RUN apt-get update --yes --quiet && apt-get install --yes --quiet --no-install-recommends \
