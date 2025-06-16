@@ -27,12 +27,22 @@ RUN apt-get update --yes --quiet && apt-get install --yes --quiet --no-install-r
 # Install the application server.
 RUN pip install "gunicorn==20.0.4"
 
-# Install the project requirements.
-#COPY requirements.txt /
-RUN pip install -r requirements.txt
+# # Install the project requirements.
+# COPY requirements.txt /
+# RUN pip install -r requirements.txt
 
-# Use /app folder as a directory where the source code is stored.
+# # Use /app folder as a directory where the source code is stored.
+# WORKDIR /app
+
+# Define diretório de trabalho
 WORKDIR /app
+
+# Copia arquivos do projeto para o container
+COPY . /app
+
+# Atualiza o pip e instala dependências do projeto
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
 # Set this directory to be owned by the "wagtail" user. This Wagtail project
 # uses SQLite, the folder needs to be owned by the user that
