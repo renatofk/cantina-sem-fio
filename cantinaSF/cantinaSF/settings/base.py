@@ -21,6 +21,8 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 CSRF_TRUSTED_ORIGINS = [
+    'https://portal.cantinasemfila.com.br',
+    'https://captura.cantinasemfila.com.br',
     'https://cantinasemfila.com.br',
     'https://www.cantinasemfila.com.br',  # Se usar o www também
 ]
@@ -28,7 +30,8 @@ CSRF_TRUSTED_ORIGINS = [
 ALLOWED_HOSTS = [
     'cantinasemfila.com.br',
     'www.cantinasemfila.com.br',
-    'portal.cantinasemfila.com.br',  # URL do admin
+    'portal.cantinasemfila.com.br',  
+    'captura.cantinasemfila.com.br',  # URL do admin
     '147.182.136.145',  # opcionalmente, se acessar via IP
 ]
 
