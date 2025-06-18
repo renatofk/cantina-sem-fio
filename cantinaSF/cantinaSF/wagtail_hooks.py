@@ -18,93 +18,133 @@ def global_admin_css():
         static('css/custom-wagtail.css')
     )
 
-
-@hooks.register("insert_editor_js")
-def custom_admin_js():
-    return format_html("""
-        <script>
-        function openCaptureModal(studentId) {{
-            const modal = document.createElement('div');
-            modal.style.position = 'fixed';
-            modal.style.top = '0';
-            modal.style.left = '0';
-            modal.style.width = '100vw';
-            modal.style.height = '100vh';
-            modal.style.background = 'rgba(0, 0, 0, 0.8)';
-            modal.style.zIndex = '9999';
-
-            const iframe = document.createElement('iframe');
-            iframe.src = `http://127.0.0.1:5006/student_id=${{studentId}}&nome`;
-            iframe.style.width = '90%';
-            iframe.style.height = '90%';
-            iframe.style.border = 'none';
-            iframe.style.margin = '5%';
-            iframe.style.borderRadius = '16px';
-            iframe.style.background = '#fff';
-
-            const closeBtn = document.createElement('button');
-            closeBtn.innerText = 'Fechar';
-            closeBtn.style.position = 'absolute';
-            closeBtn.style.top = '20px';
-            closeBtn.style.right = '30px';
-            closeBtn.style.zIndex = '10000';
-            closeBtn.style.padding = '10px 20px';
-            closeBtn.style.background = '#fff';
-            closeBtn.style.border = '1px solid #ccc';
-            closeBtn.style.borderRadius = '8px';
-            closeBtn.onclick = () => document.body.removeChild(modal);
-
-            modal.appendChild(iframe);
-            modal.appendChild(closeBtn);
-            document.body.appendChild(modal);
-        }}
-        </script>
-    """)
+@hooks.register('insert_global_admin_js')
+def global_admin_js():
+    return format_html('<script src="{}"></script>', static('js/capture_modal.js'))
 
 class StudentAdmin(ModelAdmin):
     model = Student
     menu_label = 'Alunos'
     menu_icon = 'user'
-    list_display = ("__str__", "plan", "balance", "status", "capture_photo_button")
+    # list_display = ("__str__", "plan", "balance", "status", "capture_photo_button")
+    list_display = ("__str__", "plan", "balance", "status", "capture_button")
     #list_display = ('name', 'last_name', 'plan', 'status')
     search_fields = ('name', 'last_name')
 
-    def capture_photo_button(self, obj):
-        return format_html(
-            '''
-            <button type="button" class="button button-small button-secondary" onclick="openCaptureModal_{id}()">📷</button>
-            <script>
-            function openCaptureModal_{id}() {{
-                const existingModal = document.getElementById("modalCapture_{id}");
-                if (existingModal) {{
-                    existingModal.style.display = "block";
-                    return;
+    # def capture_photo_button(self, obj):
+    #     capture_url = reverse('capture_photo', kwargs={'student_id': obj.id, 'student_name': obj.name})
+    #     return format_html(
+    #         '''
+    #         <button type="button" class="button button-small button-secondary" onclick="loadCaptureModal('{url}')">📷</button>
+    #         ''',
+    #         url=capture_url
+    #     )
+    # capture_photo_button.short_description = "Captura"
+
+    # <form action="https://captura.cantinasemfila.com.br/camera" method="post" target="_blank" id="form_{0}">
+    #             <input type="hidden" name="student_id" value="{0}" />
+    #             <input type="hidden" name="student_name" value="{1}" />
+    #             <button type="submit" class="button button-small">Capturar Foto</button>
+    #         </form>
+
+    def capture_button(self, obj):
+        return format_html('''
+            <button class="button button-small" onclick="openCaptureWindow({0}, '{1}')">Capturar</button>
+            <style>
+                .modal-overlay {{
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0,0,0,0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
                 }}
-                const modal = document.createElement("div");
-                modal.id = "modalCapture_{id}";
-                modal.style.position = "fixed";
-                modal.style.top = "5%";
-                modal.style.left = "5%";
-                modal.style.width = "90%";
-                modal.style.height = "90%";
-                modal.style.background = "white";
-                modal.style.border = "2px solid #ccc";
-                modal.style.zIndex = "10000";
-                modal.innerHTML = `
-                    <div style="padding:10px; text-align:right;">
-                        <button onclick="document.getElementById('modalCapture_{id}').style.display='none'">Fechar</button>
-                    </div>
-                    <iframe src="http://127.0.0.1:5001/camera?student_id={id}&student_name={name}" style="width:100%; height:90%; border:none;"></iframe>
-                `;
-                document.body.appendChild(modal);
+                .modal-content {{
+                    background-color: white;
+                    padding: 10px;
+                    border-radius: 8px;
+                    width: 80%;
+                    height: 80%;
+                    position: relative;
+                }}
+                .modal-content iframe {{
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                }}
+                .modal-close {{
+                    position: absolute;
+                    top: 5px;
+                    right: 10px;
+                    background: red;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 5px 10px;
+                    cursor: pointer;
+                }}
+            </style>
+            <script>
+            function openCaptureWindow(id, name) {{
+                // Cria modal
+                let existingOverlay = document.getElementById('modal-overlay');
+                if (existingOverlay) {{
+                    existingOverlay.remove(); // Remove se já existir
+                }}
+
+                const overlay = document.createElement('div');
+                overlay.id = 'modal-overlay';
+                overlay.className = 'modal-overlay';
+
+                const modal = document.createElement('div');
+                modal.className = 'modal-content';
+
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'modal-close';
+                closeBtn.innerText = 'Fechar';
+                closeBtn.onclick = () => document.body.removeChild(overlay);
+
+                const iframe = document.createElement('iframe');
+                iframe.name = 'captureFrame';
+                iframe.id = 'captureFrame';
+                iframe.setAttribute('allow', 'camera; microphone');
+
+                modal.appendChild(closeBtn);
+                modal.appendChild(iframe);
+                overlay.appendChild(modal);
+                document.body.appendChild(overlay);
+
+                // Cria form e envia os dados
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'https://captura.cantinasemfila.com.br/camera';
+                form.target = 'captureFrame';
+
+                const input1 = document.createElement('input');
+                input1.type = 'hidden';
+                input1.name = 'student_id';
+                input1.value = id;
+                form.appendChild(input1);
+
+                const input2 = document.createElement('input');
+                input2.type = 'hidden';
+                input2.name = 'student_name';
+                input2.value = name;
+                form.appendChild(input2);
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
             }}
             </script>
-            ''',
-            id=obj.id,
-            name=obj.name.replace(" ", "%20")  # simples encode
-        )
+        ''', obj.id, obj.name)
 
-    capture_photo_button.short_description = "Captura"
+
+    capture_button.short_description = "Captura"
 
 
 class CourseAdmin(ModelAdmin):
