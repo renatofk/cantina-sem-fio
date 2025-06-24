@@ -5,6 +5,10 @@ from .models import Student, Meal, History, Transaction
 from django.contrib.auth import get_user_model
 import json
 from decimal import Decimal
+from django.shortcuts import render
+
+def capture_photo_view(request, student_id, student_name):
+    return render(request, 'capture_photo.html', {'student_id': student_id, 'student_name': student_name})
 
 User = get_user_model()
 

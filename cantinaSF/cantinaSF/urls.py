@@ -6,6 +6,7 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 from .views import registrar_presencas
+from . import views
 
 from search import views as search_views
 
@@ -15,6 +16,8 @@ urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
     path("api/registrar-presencas/", registrar_presencas),
+    path('capture_photo/<int:student_id>/<str:student_name>/', views.capture_photo_view, name='capture_photo'),
+    path("accounts/", include("allauth.urls")),
 ]
 
 

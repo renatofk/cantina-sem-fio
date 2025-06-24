@@ -132,3 +132,13 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.history} - R$ {self.valor:.2f} - {self.created_at:%d/%m/%Y %H:%M}"
+    
+
+from django.dispatch import receiver
+from allauth.account.signals import user_signed_up
+from django.contrib.auth.models import Group
+
+@receiver(user_signed_up)
+def add_to_group(sender, request, user, **kwargs):
+    group = Group.objects.get(id=3)
+    user.groups.add(group)

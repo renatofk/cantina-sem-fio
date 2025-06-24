@@ -1,0 +1,112 @@
+/* Muda a cor da barra lateral (menu) */
+.sidebar-loading__inner, .sidebar__inner {
+    background-color: #2E7D32 !important;  
+}
+
+/* Muda a cor da barra superior */
+.sidebar-footer, .w-bg-surface-menus{
+    background-color: #1a471c !important;  
+}
+
+/* Cor dos ícones e textos */
+.wagtail-admin .sidebar a,
+.wagtail-admin .sidebar span {
+    color: #fff !important;
+}
+
+:root {
+    --w-color-primary: #2E7D32 !important; 
+    --w-color-secondary: #1a471c !important;
+    --w-color-secondary-400: #153b17 !important;
+    --w-color-surface-menu-item-active: #1a471c !important; 
+  }
+
+  /* Base reset */
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  color: #2c2c2c;
+  margin-bottom: 0.5em;
+}
+
+a {
+  color: #0073aa;
+  text-decoration: none;
+}
+a:hover {
+  color: #005c8f;
+  text-decoration: underline;
+}
+
+/* Layout */
+.login-page,
+.confirmation-page {
+  max-width: 480px;
+  margin: 80px auto;
+  background: white;
+  border-radius: 8px;
+  padding: 2em 3em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+}
+
+/* Forms */
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form input[type="submit"],
+form button,
+form textarea,
+select {
+  width: 100%;
+  /* padding: 10px 14px;
+  margin: 0.5em 0 1em 0; */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+/* button,
+input[type="submit"] {
+  background-color: #0073aa;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button:hover,
+input[type="submit"]:hover {
+  background-color: #005c8f;
+} */
+
+/* Feedback messages */
+ul.errorlist {
+  background: #ffe6e6;
+  border: 1px solid #e57373;
+  padding: 10px 14px;
+  margin-bottom: 1em;
+  border-radius: 4px;
+  color: #b00020;
+  list-style: none;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .login-page,
+  .confirmation-page {
+    margin: 40px 1em;
+    padding: 1.5em;
+  }
+}
+
+.messages {
+    text-align: center;
+}

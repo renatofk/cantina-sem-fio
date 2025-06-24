@@ -1,0 +1,7 @@
+Olá {{ user.first_name }},
+
+Clique no link abaixo para confirmar seu e-mail e ativar sua conta na Cantina Sem Fila:
+
+{{ activate_url }}
+
+Se não foi você que se registrou, ignore este e-mail.

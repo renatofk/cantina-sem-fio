@@ -1,2 +1,5 @@
 cantinaSF/media/
 cantinaSF/static/
+cantinaSF/certs/
+.env
+Pipfile.lock
