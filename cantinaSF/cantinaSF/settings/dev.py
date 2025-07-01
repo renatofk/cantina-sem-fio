@@ -1,4 +1,11 @@
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
 from .base import *
+
+# Load environment variables from .env file
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
