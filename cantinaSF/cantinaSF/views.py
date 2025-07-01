@@ -12,7 +12,7 @@ def capture_photo_view(request, student_id, student_name):
 
 User = get_user_model()
 
-# @csrf_exempt  // Descomente se precisar desativar CSRF para testes
+@csrf_exempt  # Precisa desativar CSRF para permitir chamadas do totem que roda localmente
 def registrar_presencas(request):
     if request.method != "POST":
         return JsonResponse({"error": "Método não permitido. Só se permite POST"}, status=405)
