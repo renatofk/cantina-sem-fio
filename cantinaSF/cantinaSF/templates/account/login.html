@@ -1,6 +1,9 @@
+{% extends "account/base.html" %}
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
+{% block content %}
 <head>
   <meta charset="UTF-8">
   <title>Login | Cantina Sem Fila</title>
@@ -26,6 +29,7 @@
     }
   </style>
 </head>
+
 <body class="login">
   <div class="wrapper">
     <div id="content" class="content-wrapper">
@@ -49,4 +53,5 @@
     </div>
   </div>
 </body>
+{% endblock %}
 </html>
