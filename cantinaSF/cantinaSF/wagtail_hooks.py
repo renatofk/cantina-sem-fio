@@ -9,7 +9,13 @@ from wagtail import hooks
 from django.urls import reverse
 from django.utils.html import format_html
 from wagtail import hooks
-from .models import Student
+from wagtail_modeladmin.views import CreateView, EditView
+from django.db.models import Q
+from .forms import TransactionForm
+from django import forms
+from django.utils.safestring import mark_safe
+from django.template.loader import render_to_string
+from django.utils.safestring import SafeString
 
 @hooks.register('insert_global_admin_css')
 def global_admin_css():
@@ -18,10 +24,6 @@ def global_admin_css():
         static('css/custom-wagtail.css')
     )
 
-@hooks.register('insert_global_admin_js')
-def global_admin_js():
-    return format_html('<script src="{}"></script>', static('js/capture_modal.js'))
-
 class StudentAdmin(ModelAdmin):
     model = Student
     menu_label = 'Alunos'
@@ -29,7 +31,11 @@ class StudentAdmin(ModelAdmin):
     list_display = ("__str__", "plan", "balance", "status", "capture_button")
     search_fields = ('name', 'last_name')
 
-
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.groups.filter(id=3).exists():
+            return qs.filter(user=request.user)
+        return qs
 
     def capture_button(self, obj):
         return format_html('''
@@ -65,12 +71,97 @@ class HistoryAdmin(ModelAdmin):
     list_display = ('student', 'meal', 'created_at', 'approved_by')
     search_fields = ('student__name', 'meal__meal_name')
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.groups.filter(id=3).exists():
+            return qs.filter(student__user=request.user)
+        return qs  
+
+class TransactionCreateView(CreateView):
+    def get_form(self):
+        form = super().get_form()
+
+        if 'type' in form.base_fields:
+            form.initial['type'] = 'credito'
+            form.fields['type'].widget.attrs['readonly'] = True
+            form.fields['type'].widget.attrs['disabled'] = True
+            form.fields['type'].required = False  # evita erro de validação
+            # form.fields['type'].widget = forms.HiddenInput()
+
+        if 'username' in form.base_fields:
+            form.initial['username'] = self.request.user
+            form.fields['username'].widget.attrs['readonly'] = True
+            form.fields['username'].widget.attrs['disabled'] = True
+            form.fields['username'].required = False
+
+        form.fields.pop('history', None)
+        # form.fields.pop('type', None)
+        # form.fields.pop('username', None)
+        return form
+    
+    def form_valid(self, form):
+        # Força os valores mesmo se vierem do frontend com outro valor
+        form.instance.type = 'credito'
+        form.instance.username = self.request.user
+
+        response = super().form_valid(form)
+
+        students = Student.objects.filter(user=self.request.user)
+        for student in students:
+            student.balance += form.instance.valor
+            student.save()
+
+        return response
+
+
 class TransactionAdmin(ModelAdmin):
     model = Transaction
     menu_label = 'Transações'
     menu_icon = 'resubmit'
-    list_display = ('history', 'valor', 'username', 'created_at')
+    list_display = ('history', 'username', 'valor', 'type', 'created_at')
     search_fields = ('history__student__name', 'username__username')
+    form_class = TransactionForm
+    create_view_class = TransactionCreateView
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # Se o usuário pertence ao group_id = 3, mostrar apenas suas próprias transações
+        if request.user.groups.filter(id=3).exists():
+            qs = qs.filter(
+                Q(username=request.user) |
+                Q(history__student__user=request.user)
+            )
+        return qs
+    
+class CustomParentHistoryPanel:
+    order = 100
+
+    def __init__(self, request):
+        self.request = request
+
+    def render_html(self, request):
+        
+        students = Student.objects.filter(user=self.request.user)
+        histories = History.objects.filter(student__in=students).order_by('-created_at')[:10]  # Pega os 10 mais recentes
+        saldo_total = 0
+        for student in students:
+            print(f"Saldo do aluno {student.name}: {student.balance}")
+            if student.balance > saldo_total:
+                saldo_total = student.balance
+        
+        return render_to_string("dashboard/parent_panel.html", {
+            "histories": histories,
+            "saldo_total": saldo_total
+        })
+
+    @property
+    def media(self):
+        from django.forms.widgets import Media
+        return Media()
+
+@hooks.register('construct_homepage_panels')
+def add_custom_history_panel(request, panels):
+    panels.append(CustomParentHistoryPanel(request))
 
 modeladmin_register(StudentAdmin)
 modeladmin_register(CourseAdmin)

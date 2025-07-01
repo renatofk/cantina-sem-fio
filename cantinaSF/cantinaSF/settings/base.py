@@ -24,7 +24,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://portal.cantinasemfila.com.br',
     'https://captura.cantinasemfila.com.br',
     'https://cantinasemfila.com.br',
-    'https://www.cantinasemfila.com.br',  # Se usar o www também
+    'https://www.cantinasemfila.com.br', 
+    'http://192.168.1.3:5050', # Se usar o www também
 ]
 
 ALLOWED_HOSTS = [
@@ -181,7 +182,7 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 10_000
 
 # Wagtail settings
 
-WAGTAIL_SITE_NAME = "cantinaSF"
+WAGTAIL_SITE_NAME = "Cantina Sem Fila"
 
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html

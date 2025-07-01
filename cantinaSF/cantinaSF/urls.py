@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.urls import include, path
+from django.urls import include, path, re_path
+from django.shortcuts import redirect
 from django.contrib import admin
 
 from wagtail.admin import urls as wagtailadmin_urls
@@ -11,13 +12,16 @@ from . import views
 from search import views as search_views
 
 urlpatterns = [
+    path('', lambda request: redirect('account_login')),
     path("django-admin/", admin.site.urls),
+    re_path(r'^admin/login/$', lambda request: redirect('/accounts/login/')),
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
     path("api/registrar-presencas/", registrar_presencas),
     path('capture_photo/<int:student_id>/<str:student_name>/', views.capture_photo_view, name='capture_photo'),
     path("accounts/", include("allauth.urls")),
+
 ]
 
 

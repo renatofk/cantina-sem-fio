@@ -125,9 +125,16 @@ class History(models.Model):
 
 # Transações que serão usadas para registrar os gastos dos alunos
 class Transaction(models.Model):
-    history = models.ForeignKey(History, on_delete=models.CASCADE)
+    TYPES = [
+        ('credito', 'Crédito'),
+        ('debito', 'Débito'),
+    ]
+    history = models.ForeignKey(History, on_delete=models.SET_NULL, null=True, blank=True)
     valor = models.DecimalField(max_digits=8, decimal_places=2)
     username = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    username.read_only = True
+    type = models.CharField(max_length=10, choices=TYPES, default='debito')
+    type.read_only = True
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

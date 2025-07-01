@@ -12,10 +12,10 @@ def capture_photo_view(request, student_id, student_name):
 
 User = get_user_model()
 
-@csrf_exempt
+# @csrf_exempt  // Descomente se precisar desativar CSRF para testes
 def registrar_presencas(request):
     if request.method != "POST":
-        return JsonResponse({"error": "Método não permitido"}, status=405)
+        return JsonResponse({"error": "Método não permitido. Só se permite POST"}, status=405)
 
     try:
         presencas = json.loads(request.body)
@@ -45,16 +45,25 @@ def registrar_presencas(request):
             print(f"Histórico criado: {history}")
             # Se plano for avulso, criar transação
             if student.plan == "avulso":
-                valor = refeicao.price
+                valor = -refeicao.price
                 print(f"Valor da refeição: {valor}")
                 Transaction.objects.create(
                     history=history,
                     valor=valor,
                     username=None  # Ou defina um admin default
                 )
-                # Atualizar saldo
-                student.balance -= Decimal(valor)
-                student.save()
+                students = Student.objects.filter(user=student.user)
+                # Atualizar saldo para todos os filhos do responsável
+                print(f"Atualizando saldo para {students.count()} alunos")
+                for s in students:
+                    s.balance += Decimal(valor)
+                    s.save()
+                    print(f"Saldo atualizado: {s.balance}")
+
+                # # Atualizar saldo
+                # student.balance += Decimal(valor)
+                # print(f"Saldo atualizado: {student.balance}")
+                # student.save()
 
         return JsonResponse({"status": "ok"})
 
