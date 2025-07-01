@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from .base import *
 
 # Load environment variables from .env file
-load_dotenv(os.path.join(BASE_DIR, '.env'))
+load_dotenv()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -29,13 +29,13 @@ DATABASES = {
     }
 }
 
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = "in-v3.mailjet.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv("MAILJET_APIKEY", "MAILJET_APIKEY")
-EMAIL_HOST_PASSWORD = os.getenv("MAILJET_APISECRET", "API_PRIVATE_KEY")
+EMAIL_HOST_USER = os.getenv("MAILJET_API_KEY")
+EMAIL_HOST_PASSWORD = os.getenv("MAILJET_API_SECRET", "API_PRIVATE_KEY")
 EMAIL_SENDER = os.getenv("MAILJET_EMAIL_SENDER", "MAILJET_EMAIL_SENDER")
 DEFAULT_FROM_EMAIL = 'naoresponda@cantinasemfila.com.br'
 
