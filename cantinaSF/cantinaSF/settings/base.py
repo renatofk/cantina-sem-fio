@@ -30,6 +30,12 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # ]
 CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "OPTIONS",
+]
+
 ALLOWED_HOSTS = [
     'cantinasemfila.com.br',
     'www.cantinasemfila.com.br',
@@ -70,9 +76,11 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",

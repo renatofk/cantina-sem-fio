@@ -15,6 +15,14 @@ User = get_user_model()
 
 @csrf_exempt  # Precisa desativar CSRF para permitir chamadas do totem que roda localmente
 def registrar_presencas(request):
+    if request.method == 'OPTIONS':
+        # Responde à preflight
+        response = JsonResponse({'ok': True})
+        response['Access-Control-Allow-Origin'] = '*'
+        response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response['Access-Control-Allow-Headers'] = 'Content-Type'
+        return response
+
     if request.method != "POST":
         return JsonResponse({"error": "Método não permitido. Só se permite POST"}, status=405)
     
