@@ -20,15 +20,15 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://portal.cantinasemfila.com.br',
-    'https://captura.cantinasemfila.com.br',
-    'https://cantinasemfila.com.br',
-    'https://www.cantinasemfila.com.br', 
-    'http://127.0.0.1:5050', # ip que o totem roda localmente
-    'http://localhost:5050', # ip que o totem roda localmente
-]
-# CSRF_TRUSTED_ORIGINS = ['*']
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://portal.cantinasemfila.com.br',
+#     'https://captura.cantinasemfila.com.br',
+#     'https://cantinasemfila.com.br',
+#     'https://www.cantinasemfila.com.br', 
+#     'http://127.0.0.1:5050', # ip que o totem roda localmente
+#     'http://localhost:5050', # ip que o totem roda localmente
+# ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 ALLOWED_HOSTS = [
     'cantinasemfila.com.br',

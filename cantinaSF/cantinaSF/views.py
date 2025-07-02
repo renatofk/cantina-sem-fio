@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 import json
 from decimal import Decimal
 from django.shortcuts import render
+from django.conf import settings
 
 def capture_photo_view(request, student_id, student_name):
     return render(request, 'capture_photo.html', {'student_id': student_id, 'student_name': student_name})
@@ -16,6 +17,12 @@ User = get_user_model()
 def registrar_presencas(request):
     if request.method != "POST":
         return JsonResponse({"error": "Método não permitido. Só se permite POST"}, status=405)
+    
+    # Valida o token de segurança
+    token = request.headers.get("KIOSK-SECRET-KEY")
+    kiosk_secret = settings.KIOSK_SECRET_KEY
+    if token != kiosk_secret:
+        return JsonResponse({"error": "Token inválido"}, status=403)
 
     try:
         presencas = json.loads(request.body)
