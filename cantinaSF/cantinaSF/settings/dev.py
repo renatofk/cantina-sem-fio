@@ -14,9 +14,9 @@ DEBUG = True
 SECRET_KEY = "django-insecure-14n3^6$xsv#a468(&(0&hf%6xjtg#6bpx4q^_2ha7)@5z7-kty"
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = ["*"]
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 DATABASES = {
     "default": {
@@ -38,6 +38,14 @@ EMAIL_HOST_USER = os.getenv("MAILJET_API_KEY")
 EMAIL_HOST_PASSWORD = os.getenv("MAILJET_API_SECRET", "API_PRIVATE_KEY")
 EMAIL_SENDER = os.getenv("MAILJET_EMAIL_SENDER", "MAILJET_EMAIL_SENDER")
 DEFAULT_FROM_EMAIL = 'naoresponda@cantinasemfila.com.br'
+
+# EMAIL_BACKEND = 'django_mailjet.backends.MailjetBackend'
+# MAILJET_API_KEY = os.getenv("MAILJET_API_KEY")
+# MAILJET_API_SECRET = os.getenv("MAILJET_API_SECRET", "API_PRIVATE_KEY")
+# DEFAULT_FROM_EMAIL = 'naoresponda@cantinasemfila.com.br'
+# EMAIL_HOST_USER = 'naoresponda@cantinasemfila.com.br'
+# EMAIL_HOST_USER_NAME = f'Cantina Sem Fila <{EMAIL_HOST_USER}>'
+
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"

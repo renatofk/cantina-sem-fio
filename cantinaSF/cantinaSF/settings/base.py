@@ -20,13 +20,14 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://portal.cantinasemfila.com.br',
-    'https://captura.cantinasemfila.com.br',
-    'https://cantinasemfila.com.br',
-    'https://www.cantinasemfila.com.br', 
-    'http://192.168.1.3:5050', # Se usar o www também
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://portal.cantinasemfila.com.br',
+#     'https://captura.cantinasemfila.com.br',
+#     'https://cantinasemfila.com.br',
+#     'https://www.cantinasemfila.com.br', 
+#     'http://192.168.1.3:5050', # Se usar o www também
+# ]
+CSRF_TRUSTED_ORIGINS = ['*']
 
 ALLOWED_HOSTS = [
     'cantinasemfila.com.br',
