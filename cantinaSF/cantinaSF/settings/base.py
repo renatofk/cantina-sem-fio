@@ -25,7 +25,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://captura.cantinasemfila.com.br',
     'https://cantinasemfila.com.br',
     'https://www.cantinasemfila.com.br', 
-    'http://192.168.1.3:5050', # Se usar o www também
+    'http://127.0.0.1:5050', # ip que o totem roda localmente
+    'http://localhost:5050', # ip que o totem roda localmente
 ]
 # CSRF_TRUSTED_ORIGINS = ['*']
 
