@@ -45,4 +45,4 @@ RUN chown -R wagtail:wagtail /app
 USER wagtail
 
 # CMD in JSON form (to avoid signal issues)
-CMD ["gunicorn", "cantinaSF.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "cantinasf.wsgi:application", "--bind", "0.0.0.0:8000"]
