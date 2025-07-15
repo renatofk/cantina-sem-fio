@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from corsheaders.defaults import default_headers
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
@@ -34,6 +35,10 @@ CORS_ALLOW_METHODS = [
     "GET",
     "POST",
     "OPTIONS",
+]
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "KIOSK-SECRET-KEY",
 ]
 
 ALLOWED_HOSTS = [
