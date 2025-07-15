@@ -32,6 +32,9 @@ RUN pip install -r requirements.txt
 # Copy remaining project files
 COPY . /app
 
+# Run migrations
+RUN python manage.py migrate --noinput
+
 # Run collectstatic as root (to ensure all libs are accessible)
 RUN python manage.py collectstatic --noinput --clear
 
