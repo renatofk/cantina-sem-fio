@@ -1,0 +1,201 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-14 16:29-0300\n"
+"PO-Revision-Date: 2025-07-14 16:32-0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.6\n"
+
+#: cantinaSF/models.py:20
+msgid "Course"
+msgstr "Curso"
+
+#: cantinaSF/models.py:21
+msgid "Courses"
+msgstr "Cursos"
+
+#: cantinaSF/models.py:33
+msgid "Meal"
+msgstr "Refeição"
+
+#: cantinaSF/models.py:34
+msgid "Meals"
+msgstr "Refeições"
+
+#: cantinaSF/models.py:51
+msgid "Name"
+msgstr "Nome"
+
+#: cantinaSF/models.py:52
+msgid "Sobrenome"
+msgstr "Sobrenome"
+
+#: cantinaSF/models.py:53
+msgid "Plan"
+msgstr "Plano"
+
+#: cantinaSF/models.py:54
+msgid "Data de nascimento"
+msgstr "Dados de nascimento"
+
+#: cantinaSF/models.py:58
+msgid "Balance"
+msgstr "Saldo Atual"
+
+#: cantinaSF/models.py:59
+msgid "Creation Date"
+msgstr "Data de Criação"
+
+# Campos
+#: cantinaSF/models.py:62
+msgid "Student"
+msgstr "Aluno"
+
+#: cantinaSF/models.py:63
+msgid "Students"
+msgstr "Alunos"
+
+#: cantinaSF/models.py:97
+msgid "Detected At"
+msgstr "Detectado em"
+
+#: cantinaSF/models.py:99 cantinaSF/models.py:121
+msgid "Created At"
+msgstr "Criado em"
+
+#: cantinaSF/models.py:102
+msgid "History"
+msgstr "Histórico"
+
+#: cantinaSF/models.py:103
+msgid "Histories"
+msgstr "Histórico"
+
+#: cantinaSF/models.py:116
+msgid "Value"
+msgstr "Valor"
+
+#: cantinaSF/models.py:119
+msgid "Type"
+msgstr "Tipo"
+
+#: cantinaSF/models.py:124
+msgid "Transaction"
+msgstr "Transação"
+
+#: cantinaSF/models.py:125
+msgid "Transactions"
+msgstr "Transações"
+
+#: home/templates/home/welcome_page.html:6
+msgid "Visit the Wagtail website"
+msgstr ""
+
+#: home/templates/home/welcome_page.html:15
+msgid "View the release notes"
+msgstr ""
+
+#: home/templates/home/welcome_page.html:27
+msgid "Welcome to your new Wagtail site!"
+msgstr ""
+
+#: home/templates/home/welcome_page.html:28
+msgid ""
+"Please feel free to <a href=\"https://github.com/wagtail/wagtail/wiki/"
+"Slack\">join our community on Slack</a>, or get started with one of the "
+"links below."
+msgstr ""
+
+#: home/templates/home/welcome_page.html:35
+msgid "Wagtail Documentation"
+msgstr ""
+
+#: home/templates/home/welcome_page.html:36
+msgid "Topics, references, & how-tos"
+msgstr ""
+
+#: home/templates/home/welcome_page.html:42
+msgid "Tutorial"
+msgstr ""
+
+#: home/templates/home/welcome_page.html:43
+msgid "Build your first Wagtail site"
+msgstr ""
+
+#: home/templates/home/welcome_page.html:49
+msgid "Admin Interface"
+msgstr ""
+
+#: home/templates/home/welcome_page.html:50
+msgid "Create your superuser first!"
+msgstr ""
+
+# Títulos
+#~ msgid "Add Student"
+#~ msgstr "Adicionar Aluno"
+
+#~ msgid "Add Credit"
+#~ msgstr "Adicionar Crédito"
+
+#~ msgid "Welcome"
+#~ msgstr "Bem-vindo"
+
+#~ msgid "Date"
+#~ msgstr "Data"
+
+#~ msgid "Credit"
+#~ msgstr "Crédito"
+
+#~ msgid "Username"
+#~ msgstr "Responsável"
+
+# Botões
+#~ msgid "Save"
+#~ msgstr "Salvar"
+
+#~ msgid "Cancel"
+#~ msgstr "Cancelar"
+
+#~ msgid "Confirm"
+#~ msgstr "Confirmar"
+
+#~ msgid "Logout"
+#~ msgstr "Sair"
+
+#~ msgid "Add Presence"
+#~ msgstr "Registrar Presença"
+
+#~ msgid "Confirm Presence"
+#~ msgstr "Confirmar Presenças"
+
+# Mensagens
+#~ msgid "No records found."
+#~ msgstr "Nenhum registro encontrado."
+
+#~ msgid "Your session has expired. Please log in again."
+#~ msgstr "Sua sessão expirou. Por favor, faça login novamente."
+
+#~ msgid "Invalid credentials"
+#~ msgstr "Credenciais inválidas"
+
+#~ msgid "Password reset email has been sent."
+#~ msgstr "E-mail de redefinição de senha enviado."
+
+#~ msgid ""
+#~ "Registration successful. Please check your email to activate your account."
+#~ msgstr ""
+#~ "Cadastro realizado com sucesso. Por favor, verifique seu e-mail para "
+#~ "ativar sua conta."

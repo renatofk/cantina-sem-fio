@@ -10,6 +10,14 @@
   .dashboard-box h3 {
     margin-top: 0;
   }
+  .dashboard-box .add-button {
+    background-color: var(--w-color-surface-button-default);
+    color: white;
+    padding: 6px 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+  }
   .balance-row {
     display: flex;
     justify-content: space-between;
@@ -19,15 +27,7 @@
   .balance-row .saldo {
     font-size: 18px;
     font-weight: bold;
-    color: #0077cc;
-  }
-  .balance-row .add-button {
-    background-color: #0077cc;
-    color: white;
-    padding: 6px 12px;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: bold;
+    color: var(--w-color-surface-button-default);
   }
   .history-table {
     width: 100%;
@@ -42,7 +42,34 @@
     text-align: left;
     background: #f0f0f0;
   }
+  .w-hidden {
+    display: none;
+  }
+  .sidebar-menu-item .menuitem-label:contains("Ajuda") {
+    display: none !important;
+  }
 </style>
+<script>
+  // Oculta o form de pesquisa do Wagtail role="search"
+  document.addEventListener('DOMContentLoaded', function() {
+    var searchForm = document.querySelector('form[role="search"]');
+    if (searchForm) {
+      searchForm.style.display = 'none';
+    }
+  });
+ 
+</script>
+
+<div class="dashboard-box">
+  <div class="balance-row">
+    <div class="saldo">
+      Bem-vindo, {{ user.first_name }}
+    </div>
+    <a class="add-button" href="/admin/cantinaSF/student/create/">Adicionar Aluno</a>
+  </div>
+  <p>Este é o painel de controle dos pais. Aqui você pode gerenciar o saldo dos seus filhos e visualizar os registros de consumo.</p>
+  <p>Para adicionar seus filhos, clique no botão.</p>
+</div>
 
 <div class="dashboard-box">
   <div class="balance-row">

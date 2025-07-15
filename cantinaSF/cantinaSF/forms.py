@@ -1,5 +1,7 @@
+from datetime import datetime
 from django import forms
-from .models import Transaction
+from .models import Transaction, Student
+from django.utils.translation import gettext_lazy as _
 
 class TransactionForm(forms.ModelForm):
     class Meta:
@@ -18,9 +20,31 @@ class TransactionForm(forms.ModelForm):
         return obj
 
 
-    # def save(self, commit=True):
-    #     instance = super().save(commit=False)
-    #     instance.type = 'credito'  # força o valor
-    #     if commit:
-    #         instance.save()
-    #     return instance
+class StudentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.for_user = kwargs.pop('for_user', None)  # <- pega e remove o argumento
+        super().__init__(*args, **kwargs)
+
+    birthday = forms.DateField(
+        label=_("Data de Nascimento"),
+        widget=forms.TextInput(attrs={
+            'placeholder': 'dd/mm/aaaa',
+            'class': 'form-control',
+            'autocomplete': 'off'
+        }),
+        input_formats=['%d/%m/%Y'],
+        required=False,
+    )
+
+    class Meta:
+        model = Student
+        fields = ['name', 'last_name', 'birthday', 'plan', 'courses', 'user']
+
+    def clean_birthday(self):
+        data = self.cleaned_data.get("birthday")
+        if isinstance(data, str):
+            try:
+                data = datetime.strptime(data, "%d/%m/%Y").date()
+            except ValueError:
+                raise forms.ValidationError(_("Data inválida. Use o formato dd/mm/aaaa."))
+        return data

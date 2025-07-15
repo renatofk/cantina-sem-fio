@@ -42,6 +42,8 @@ ALLOWED_HOSTS = [
     'portal.cantinasemfila.com.br',  
     'captura.cantinasemfila.com.br',  # URL do admin
     '147.182.136.145',  # opcionalmente, se acessar via IP
+    'localhost',
+    '127.0.0.1',
 ]
 
 # Application definition
@@ -90,6 +92,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = "cantinaSF.urls"
@@ -148,8 +151,11 @@ LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
+USE_L10N = True
 
 USE_TZ = False
+
+LOCALE_PATHS = [os.path.join(BASE_DIR, 'locale')]
 
 
 # Static files (CSS, JavaScript, Images)

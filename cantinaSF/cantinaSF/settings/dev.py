@@ -30,6 +30,11 @@ DATABASES = {
     }
 }
 
+ACCOUNT_FORMS = {
+    'login': 'cantinaSF.templates.account.forms.CustomLoginForm',
+    'signup': 'cantinaSF.templates.account.forms.CustomSignupForm',
+}
+
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = "in-v3.mailjet.com"

@@ -11,11 +11,12 @@ from django.utils.html import format_html
 from wagtail import hooks
 from wagtail_modeladmin.views import CreateView, EditView
 from django.db.models import Q
-from .forms import TransactionForm
+from .forms import TransactionForm, StudentForm
 from django import forms
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 from django.utils.safestring import SafeString
+from django.utils.translation import gettext_lazy as _
 
 @hooks.register('insert_global_admin_css')
 def global_admin_css():
@@ -24,12 +25,75 @@ def global_admin_css():
         static('css/custom-wagtail.css')
     )
 
+@hooks.register('insert_global_admin_js')
+def hide_help_menu_js():
+    return format_html(
+        '<script src="{}"></script>',
+        static('js/hide_help_menu.js')
+    )
+
+@hooks.register('insert_editor_js')
+def editor_js():
+    return format_html(
+        '<script src="/static/js/birth_date_mask.js"></script>'
+    )
+
+class StudentCreateView(CreateView):
+    def get_form_class(self):
+        return StudentForm
+    
+    def get_form(self):
+        form = super().get_form()
+
+        # Deixar o campo `user` como readonly e desabilitado
+        if 'user' in form.fields:
+            form.fields['user'].widget.attrs['readonly'] = True
+            form.fields['user'].widget.attrs['disabled'] = True
+            form.fields['user'].required = False  # Evita erro de validação
+
+        # Adicionar classe CSS para o campo birthday
+        if 'birthday' in form.fields:
+            form.fields['birthday'].widget.attrs['class'] = 'datepicker'
+
+        return form
+    
+class StudentEditView(EditView):
+    def get_form_class(self):
+        return StudentForm
+    
+    def get_form(self):
+        form = super().get_form()
+
+        # Deixar o campo `user` como readonly e desabilitado
+        if 'user' in form.fields:
+            form.fields['user'].widget.attrs['readonly'] = True
+            form.fields['user'].widget.attrs['disabled'] = True
+            form.fields['user'].required = False  # Evita erro de validação
+
+        # Adicionar classe CSS para o campo birthday
+        if 'birthday' in form.fields:
+            form.fields['birthday'].widget.attrs['class'] = 'datepicker'
+
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'].for_user = self.request.user  # Pass the user to the form
+        return context
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
 class StudentAdmin(ModelAdmin):
     model = Student
-    menu_label = 'Alunos'
+    menu_label = _('Alunos')
     menu_icon = 'user'
-    list_display = ("__str__", "plan", "balance", "status", "capture_button")
+    form_class = StudentForm
+    list_display = ("__str__", "plan", "balance", "capture_button")
     search_fields = ('name', 'last_name')
+    create_view_class = StudentCreateView
+    edit_view_class = StudentEditView
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

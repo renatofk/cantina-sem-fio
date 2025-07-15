@@ -8,12 +8,17 @@ from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import FieldPanel
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
 class Course(models.Model):
     course_name = models.CharField(max_length=200)
     teacher = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = _("Course")
+        verbose_name_plural = _("Courses")
 
     def __str__(self):
         return f'{self.course_name} - {self.teacher}'
@@ -23,6 +28,10 @@ class Meal(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     start_time = models.TimeField()
     end_time = models.TimeField()
+
+    class Meta:
+        verbose_name = _("Meal")
+        verbose_name_plural = _("Meals")
 
     def __str__(self):
         return f'{self.meal_name} - {self.price} R$'
@@ -39,15 +48,20 @@ class Student(ClusterableModel):
         ('inactive', 'Inactive'),
     ]
 
-    name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    plan = models.CharField(max_length=20, choices=PLAN_CHOICES)
-    birthday = models.DateField()
+    name = models.CharField(_('Name'), max_length=100)
+    last_name = models.CharField(_('Sobrenome'), max_length=100)
+    plan = models.CharField(_('Plan'), max_length=20, choices=PLAN_CHOICES)
+    birthday = models.DateField(_('Data de nascimento'), )
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    courses = models.ManyToManyField(Course, blank=True)
-    balance = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
-    creation_date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Responsable"))
+    # courses = models.ManyToManyField(Course, blank=True, verbose_name=_("Curso"))
+    courses = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Curso"))
+    balance = models.DecimalField(_('Balance'), max_digits=8, decimal_places=2, default=0.00)
+    creation_date = models.DateTimeField(_('Creation Date'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Student")
+        verbose_name_plural = _("Students")
 
     panels = [
         FieldPanel("name"),
@@ -57,41 +71,6 @@ class Student(ClusterableModel):
         FieldPanel("status"),
         FieldPanel("user"),
         FieldPanel("courses"),
-        # HelpPanel(
-        #     content=format_html(
-        #         """
-        #         <button type="button" class="button button-small button-secondary" onclick="openCaptureModal()">📷 Capturar Foto</button>
-        #         <div id="captureModal" style="display:none; position:fixed; top:5%; left:5%; width:90%; height:90%; background:white; border:2px solid #ccc; z-index:10000;">
-        #             <div style="padding:10px; text-align:right;">
-        #                 <button onclick="closeCaptureModal()">Fechar</button>
-        #             </div>
-        #             <iframe id="captureFrame" src="" style="width:100%; height:90%; border:none;"></iframe>
-        #         </div>
-
-        #         <script>
-        #             function openCaptureModal() {{
-        #                 const nameField = document.querySelector('input[name="name"]');
-        #                 const name = nameField ? nameField.value : '';
-
-        #                 // Pega o ID da URL como /123/change/
-        #                 const match = window.location.pathname.match(/(\\d+)/);
-        #                 const id = match ? match[1] : '';
-
-        #                 const modal = document.getElementById('captureModal');
-        #                 const frame = document.getElementById('captureFrame');
-        #                 frame.src = "http://127.0.0.1:5001/camera?student_id=" + id + "&student_name=" + encodeURIComponent(name);
-        #                 modal.style.display = 'block';
-        #             }}
-
-        #             function closeCaptureModal() {{
-        #                 document.getElementById('captureModal').style.display = 'none';
-        #             }}
-        #         </script>
-        #         """
-        #     ),
-        #     heading="Captura de Foto",
-        # ),
-        # InlinePanel("photos", label="Fotos do aluno"),
     ]
 
 
@@ -114,11 +93,16 @@ class StudentPhoto(Orderable):
     ]
 
 class History(models.Model):
-    student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='histories')
-    meal = models.ForeignKey('Meal', on_delete=models.SET_NULL, null=True, related_name='histories')
-    detected_at = models.DateTimeField(null=True, blank=True)
-    approved_by = models.ForeignKey(get_user_model(), null=True, blank=True, on_delete=models.SET_NULL)
-    created_at = models.DateTimeField(auto_now_add=True)
+    student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='histories', verbose_name=_("Aluno"))
+    meal = models.ForeignKey('Meal', on_delete=models.SET_NULL, null=True, related_name='histories', verbose_name=_("Refeição"))
+    detected_at = models.DateTimeField(_('Detected At'), null=True, blank=True)
+    approved_by = models.ForeignKey(get_user_model(), null=True, blank=True, on_delete=models.SET_NULL, verbose_name=_("Aprovado por"))
+    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("History")
+        verbose_name_plural = _("Histories")
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.student.name} - {self.meal.meal_name} ({self.created_at.strftime('%Y-%m-%d %H:%M')})"
@@ -129,13 +113,18 @@ class Transaction(models.Model):
         ('credito', 'Crédito'),
         ('debito', 'Débito'),
     ]
-    history = models.ForeignKey(History, on_delete=models.SET_NULL, null=True, blank=True)
-    valor = models.DecimalField(max_digits=8, decimal_places=2)
-    username = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    history = models.ForeignKey(History, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Histórico"))
+    valor = models.DecimalField(_('Value'), max_digits=8, decimal_places=2)
+    username = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Responsável"))
     username.read_only = True
-    type = models.CharField(max_length=10, choices=TYPES, default='debito')
+    type = models.CharField(_('Type'), max_length=10, choices=TYPES, default='debito')
     type.read_only = True
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Transaction")
+        verbose_name_plural = _("Transactions")
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.history} - R$ {self.valor:.2f} - {self.created_at:%d/%m/%Y %H:%M}"
