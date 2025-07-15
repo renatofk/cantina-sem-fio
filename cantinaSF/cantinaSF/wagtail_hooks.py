@@ -57,6 +57,10 @@ class StudentCreateView(CreateView):
 
         return form
     
+    def form_valid(self, form):
+        form.instance.user = self.request.user # Grava o usuário atual
+        return super().form_valid(form)
+    
 class StudentEditView(EditView):
     def get_form_class(self):
         return StudentForm
@@ -66,8 +70,7 @@ class StudentEditView(EditView):
 
         # Deixar o campo `user` como readonly e desabilitado
         if 'user' in form.fields:
-            form.fields['user'].widget.attrs['readonly'] = True
-            form.fields['user'].widget.attrs['disabled'] = True
+            form.fields['user'].disabled = True
             form.fields['user'].required = False  # Evita erro de validação
 
         # Adicionar classe CSS para o campo birthday
@@ -82,8 +85,9 @@ class StudentEditView(EditView):
         return context
     
     def form_valid(self, form):
-        form.instance.user = self.request.user
+        form.instance.user = self.instance.user # Mantém o usuário original
         return super().form_valid(form)
+    
 
 class StudentAdmin(ModelAdmin):
     model = Student
