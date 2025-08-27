@@ -13,7 +13,7 @@ def capture_photo_view(request, student_id, student_name):
 
 User = get_user_model()
 
-@csrf_exempt  # Precisa desativar CSRF para permitir chamadas do totem que roda localmente
+@csrf_exempt
 def registrar_presencas(request):
     if request.method == 'OPTIONS':
         # Responde à preflight
@@ -24,7 +24,8 @@ def registrar_presencas(request):
         return response
 
     if request.method != "POST":
-        return JsonResponse({"error": "Método não permitido. Só se permite POST"}, status=405)
+        print(f"Método não permitido: {request.method}")
+        return JsonResponse({"error": "Método [{request.method}] não permitido. Só se permite POST"}, status=405)
     
     # Valida o token de segurança
     token = request.headers.get("KIOSK-SECRET-KEY")

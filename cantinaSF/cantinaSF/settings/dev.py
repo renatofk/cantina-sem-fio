@@ -52,17 +52,6 @@ DEFAULT_FROM_EMAIL = 'naoresponda@cantinasemfila.com.br'
 # EMAIL_HOST_USER = 'naoresponda@cantinasemfila.com.br'
 # EMAIL_HOST_USER_NAME = f'Cantina Sem Fila <{EMAIL_HOST_USER}>'
 
-
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-LOGIN_REDIRECT_URL = "/admin/"
-# WAGTAIL_LOGOUT_URL = '/'
-# LOGOUT_REDIRECT_URL = '/'
-# ACCOUNT_LOGOUT_REDIRECT_URL = "/"
-ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Cantina Sem Fila] "
-
 SITE_ID = 1
 
 try:

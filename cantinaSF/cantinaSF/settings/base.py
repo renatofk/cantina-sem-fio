@@ -17,6 +17,24 @@ from corsheaders.defaults import default_headers
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",  # backend padrão
+    "allauth.account.auth_backends.AuthenticationBackend",  # backend do allauth
+)
+
+# Allauth - login via e-mail
+ACCOUNT_LOGIN_METHODS = {'email'}   # só aceita email no login
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']             # email obrigatório
+ACCOUNT_UNIQUE_EMAIL = True               # email deve ser único
+
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+LOGIN_REDIRECT_URL = "/admin/"
+# WAGTAIL_LOGOUT_URL = '/'
+# LOGOUT_REDIRECT_URL = '/'
+# ACCOUNT_LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Cantina Sem Fila] "
+ACCOUNT_ADAPTER = "cantinaSF.adapters.UsernameAsEmailAdapter"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/

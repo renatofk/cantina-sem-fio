@@ -27,6 +27,36 @@
     .button {
       width: 100%;
     }
+
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-wrapper input {
+      width: 100%;
+      padding-right: 2.5rem; /* espaço pro botão não sobrepor o texto */
+    }
+
+    .password-wrapper .toggle-password {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        top: -5px;
+        right: 0;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.4rem;
+        font-weight: normal;
+        color: #555;
+    }
+
+    .password-wrapper .toggle-password:focus {
+      outline: none;
+    }
+
   </style>
 </head>
 
@@ -42,9 +72,26 @@
         {% endif %}
         <h1>Login</h1>
         <form method="post" action="{% url 'account_login' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="button" type="submit">Entrar</button>
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+
+          <div>
+            {{ form.login.label_tag }}
+            {{ form.login }}
+          </div>
+
+          <div class="password-wrapper">
+            {{ form.password }}
+            <button type="button" class="toggle-password" data-target="id_password">
+              👁
+            </button>
+          </div>
+
+          {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+          {% endif %}
+
+          <button type="submit">Entrar</button>
         </form>
         <p style="text-align:center; margin-top: 15px;">
         <a href="{% url 'account_reset_password' %}">Esqueci minha senha</a><br>
@@ -53,5 +100,21 @@
     </div>
   </div>
 </body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const toggleBtn = document.querySelector(".toggle-password");
+  const passwordInput = document.querySelector("input[name='password']");
+
+  toggleBtn.addEventListener("click", function () {
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      this.textContent = "--"; // olho fechado
+    } else {
+      passwordInput.type = "password";
+      this.textContent = "👁"; // olho aberto
+    }
+  });
+});
+</script>
 {% endblock %}
 </html>
