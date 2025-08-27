@@ -59,7 +59,7 @@ def registrar_presencas(request):
                 approved_by=None  # Ou algum user default
             )
             print(f"Histórico criado: {history}")
-            # Se plano for avulso, criar transação
+            # Se plano for avulso, cria transação
             if student.plan == "avulso":
                 valor = -refeicao.price
                 print(f"Valor da refeição: {valor}")
@@ -68,7 +68,7 @@ def registrar_presencas(request):
                     valor=valor,
                     username=None  # Ou defina um admin default
                 )
-                students = Student.objects.filter(user=student.user)
+                students = Student.objects.filter(user=student.user, plan='avulso')
                 # Atualizar saldo para todos os filhos do responsável
                 print(f"Atualizando saldo para {students.count()} alunos")
                 for s in students:
