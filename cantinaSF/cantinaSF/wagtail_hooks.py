@@ -23,6 +23,32 @@ from django.conf import settings
 from urllib.parse import urlencode
 from .carapassa_client import CaraPassaSubjectDeletionError, delete_subject
 
+@hooks.register('construct_main_menu')
+def hide_default_wagtail_menu_items(request, menu_items):
+    names_to_remove = {
+        'search',
+        'pages',
+        'images',
+        'documents',
+    }
+    labels_to_remove = {
+        'Search',
+        'Pages',
+        'Images',
+        'Documents',
+        'Busca',
+        'Páginas',
+        'Imagens',
+        'Documentos',
+    }
+
+    menu_items[:] = [
+        item for item in menu_items
+        if getattr(item, 'name', None) not in names_to_remove
+        and getattr(item, 'label', None) not in labels_to_remove
+    ]
+
+
 @hooks.register('insert_global_admin_css')
 def global_admin_css():
     return format_html(

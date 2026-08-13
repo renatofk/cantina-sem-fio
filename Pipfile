@@ -4,8 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-wagtail = "<6.5,>=6.4"
-django = "<5.2,>=5.1"
+wagtail = ">=7.4,<8.0"
+django = ">=5.2,<5.3"
+django-modelcluster = "==6.5.0"
+django-treebeard = "==4.8.0"
+django-tasks = "==0.9.0"
 psycopg2 = "*"
 wagtail-modeladmin = "*"
 django-sslserver = "*"

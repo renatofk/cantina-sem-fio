@@ -56,17 +56,22 @@ a:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
 }
 
-/* Forms */
-form input[type="text"],
-form input[type="email"],
-form input[type="password"],
-form input[type="submit"],
-form button,
-form textarea,
-select {
+/* Forms: restringe ao login/auth para não quebrar o layout do painel administrativo do Wagtail */
+.auth-card input[type="text"],
+.auth-card input[type="email"],
+.auth-card input[type="password"],
+.auth-card input[type="submit"],
+.auth-card button,
+.auth-card textarea,
+.auth-card select,
+.login-page input[type="text"],
+.login-page input[type="email"],
+.login-page input[type="password"],
+.login-page input[type="submit"],
+.login-page button,
+.login-page textarea,
+.login-page select {
   width: 100%;
-  /* padding: 10px 14px;
-  margin: 0.5em 0 1em 0; */
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 15px;
@@ -148,12 +153,16 @@ body {
     color: #2c3e50;
 }
 
-form {
+.auth-card form,
+.login-page form {
     display: flex;
     flex-direction: column;
 }
 
-input, select {
+.auth-card input,
+.auth-card select,
+.login-page input,
+.login-page select {
     margin-bottom: 16px;
     padding: 10px;
     border: 1px solid #ccc;
@@ -161,7 +170,10 @@ input, select {
     font-size: 16px;
 }
 
-button, input[type="submit"] {
+.auth-card button,
+.auth-card input[type="submit"],
+.login-page button,
+.login-page input[type="submit"] {
     background-color: #0077cc;
     color: white;
     padding: 10px;
@@ -171,11 +183,15 @@ button, input[type="submit"] {
     cursor: pointer;
 }
 
-button:hover, input[type="submit"]:hover {
+.auth-card button:hover,
+.auth-card input[type="submit"]:hover,
+.login-page button:hover,
+.login-page input[type="submit"]:hover {
     background-color: #005fa3;
 }
 
-a {
+.auth-card a,
+.login-page a {
     color: #0077cc;
     text-decoration: none;
     font-size: 14px;
@@ -184,6 +200,25 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+
+/* Reposição do layout do painel administrativo para evitar paginação/listagem deslocada */
+.wagtail-admin .pagination,
+.wagtail-admin .pagination__container,
+.wagtail-admin .listing__footer,
+.wagtail-admin .w-listing__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.wagtail-admin .pagination > *,
+.wagtail-admin .pagination__container > *,
+.wagtail-admin .listing__footer > *,
+.wagtail-admin .w-listing__footer > * {
+    flex: 0 0 auto;
 }
 
 @media (max-width: 480px) {
@@ -195,7 +230,10 @@ a:hover {
         font-size: 2em;
     }
 
-    input, button {
+    .auth-card input,
+    .auth-card button,
+    .login-page input,
+    .login-page button {
         font-size: 14px;
     }
 }
