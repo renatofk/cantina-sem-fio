@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -58,6 +60,9 @@ class Student(ClusterableModel):
     courses = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Curso"))
     balance = models.DecimalField(_('Balance'), max_digits=8, decimal_places=2, default=0.00)
     creation_date = models.DateTimeField(_('Creation Date'), auto_now_add=True)
+    integration_id = models.UUIDField(
+        _("ID de integração"), default=uuid.uuid4, unique=True, editable=False
+    )
 
     class Meta:
         verbose_name = _("Student")
@@ -98,6 +103,7 @@ class History(models.Model):
     detected_at = models.DateTimeField(_('Detected At'), null=True, blank=True)
     approved_by = models.ForeignKey(get_user_model(), null=True, blank=True, on_delete=models.SET_NULL, verbose_name=_("Aprovado por"))
     created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+    consumption_key = models.CharField(max_length=150, unique=True, null=True, blank=True, editable=False)
 
     class Meta:
         verbose_name = _("History")
@@ -128,6 +134,70 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.history} - R$ {self.valor:.2f} - {self.created_at:%d/%m/%Y %H:%M}"
+
+
+class CaraPassaDevice(models.Model):
+    """Maps a CaraPassa device to a point of service in this Django tenant."""
+
+    tenant_id = models.UUIDField()
+    school_id = models.UUIDField()
+    device_id = models.UUIDField(unique=True)
+    name = models.CharField(max_length=150)
+    active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Dispositivo CaraPassa"
+        verbose_name_plural = "Dispositivos CaraPassa"
+        constraints = [
+            models.UniqueConstraint(
+                fields=("tenant_id", "school_id", "device_id"),
+                name="unique_carapassa_device_mapping",
+            )
+        ]
+
+    def __str__(self):
+        return self.name
+
+
+class CaraPassaEvent(models.Model):
+    class Status(models.TextChoices):
+        RECEIVED = "received", "Recebido"
+        PROCESSED = "processed", "Processado"
+        REJECTED = "rejected", "Recusado"
+        ERROR = "error", "Erro"
+
+    event_id = models.UUIDField(unique=True)
+    event_type = models.CharField(max_length=80)
+    tenant_id = models.UUIDField()
+    school_id = models.UUIDField()
+    subject_id = models.UUIDField()
+    device_id = models.UUIDField()
+    occurred_at = models.DateTimeField()
+    confidence = models.DecimalField(max_digits=8, decimal_places=6)
+    distance = models.DecimalField(max_digits=8, decimal_places=6)
+    model_version = models.CharField(max_length=100)
+    payload = models.JSONField()
+    received_at = models.DateTimeField(auto_now_add=True)
+    processed_at = models.DateTimeField(null=True, blank=True)
+    processing_status = models.CharField(
+        max_length=20, choices=Status.choices, default=Status.RECEIVED
+    )
+    processing_error = models.TextField(blank=True)
+    student = models.ForeignKey(Student, null=True, blank=True, on_delete=models.SET_NULL)
+    device_mapping = models.ForeignKey(
+        CaraPassaDevice, null=True, blank=True, on_delete=models.SET_NULL
+    )
+    history = models.OneToOneField(History, null=True, blank=True, on_delete=models.SET_NULL)
+    transaction = models.OneToOneField(Transaction, null=True, blank=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        verbose_name = "Evento CaraPassa"
+        verbose_name_plural = "Eventos CaraPassa"
+        ordering = ("-received_at",)
+
+    def __str__(self):
+        return str(self.event_id)
     
 
 from django.dispatch import receiver

@@ -1,0 +1,20 @@
+<section class="panel nice-padding" style="margin-bottom: 24px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+    <div>
+      <h2 style="margin: 0 0 6px;">Reconhecimento facial</h2>
+      <p style="margin: 0;">
+        Abra o terminal CaraPassa para identificar o aluno e registrar o consumo.
+      </p>
+    </div>
+    {% if recognition_url %}
+      <a
+        href="{{ recognition_url }}"
+        target="_blank"
+        rel="noreferrer noopener"
+        class="button button-longrunning"
+      >Iniciar reconhecimento</a>
+    {% else %}
+      <span>Configure CARAPASSA_API_KEY para habilitar.</span>
+    {% endif %}
+  </div>
+</section>

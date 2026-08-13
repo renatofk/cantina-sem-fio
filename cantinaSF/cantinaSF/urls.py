@@ -7,6 +7,7 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 from .views import registrar_presencas
+from .carapassa_views import carapassa_face_status, carapassa_webhook
 from . import views
 
 from search import views as search_views
@@ -21,6 +22,8 @@ urlpatterns = [
     path("api/registrar-presencas/", registrar_presencas),
     path('capture_photo/<int:student_id>/<str:student_name>/', views.capture_photo_view, name='capture_photo'),
     path("accounts/", include("allauth.urls")),
+    path("api/carapassa/webhook/", carapassa_webhook, name="carapassa_webhook"),
+    path("api/carapassa/face-status/", carapassa_face_status, name="carapassa_face_status"),
 
 ]
 

@@ -2,10 +2,20 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-from .base import *
-
 # Load environment variables from .env file
 load_dotenv()
+
+from .base import *
+APP_DOMAIN = os.getenv("APP_DOMAIN", "http://localhost:8000")
+CARAPASSA_APP_URL = os.getenv("CARAPASSA_APP_URL", "http://localhost:8001")
+CARAPASSA_FACE_STATUS_URL = os.getenv(
+    "CARAPASSA_FACE_STATUS_URL",
+    f"{CARAPASSA_APP_URL.rstrip('/')}/v1/subjects/face-status",
+)
+CARAPASSA_DELETE_SUBJECT_URL = os.getenv(
+    "CARAPASSA_DELETE_SUBJECT_URL",
+    f"{CARAPASSA_APP_URL.rstrip('/')}/v1/subjects/{{subject_id}}",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -35,8 +45,7 @@ ACCOUNT_FORMS = {
     'signup': 'cantinaSF.templates.account.forms.CustomSignupForm',
 }
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = "in-v3.mailjet.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

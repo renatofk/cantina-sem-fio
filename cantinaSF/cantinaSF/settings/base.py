@@ -16,6 +16,10 @@ from corsheaders.defaults import default_headers
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
+APP_DOMAIN = os.getenv(
+    "APP_DOMAIN",
+    "https://captura.cantinasemfila.com.br",
+)
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",  # backend padrão
@@ -67,6 +71,7 @@ ALLOWED_HOSTS = [
     '147.182.136.145',  # opcionalmente, se acessar via IP
     'localhost',
     '127.0.0.1',
+    '192.168.1.15',  # acesso local por celular na mesma rede Wi-Fi
 ]
 
 # Application definition
@@ -242,3 +247,28 @@ WAGTAILADMIN_BASE_URL = "https://portal.cantinasemfila.com.br"
 WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'txt', 'xlsx', 'zip']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CARAPASSA_ENABLED = os.getenv("CARAPASSA_ENABLED", "true").lower() in {"1", "true", "yes"}
+CARAPASSA_WEBHOOK_SECRET = os.getenv("CARAPASSA_WEBHOOK_SECRET", "")
+CARAPASSA_TIMESTAMP_TOLERANCE_SECONDS = int(
+    os.getenv("CARAPASSA_TIMESTAMP_TOLERANCE_SECONDS", "300")
+)
+CARAPASSA_APP_URL = os.getenv(
+    "CARAPASSA_APP_URL", "https://captura.cantinasemfila.com.br"
+)
+CARAPASSA_API_KEY = os.getenv("CARAPASSA_API_KEY", "")
+CARAPASSA_FACE_STATUS_URL = os.getenv(
+    "CARAPASSA_FACE_STATUS_URL",
+    f"{CARAPASSA_APP_URL.rstrip('/')}/v1/subjects/face-status",
+)
+CARAPASSA_API_TIMEOUT_SECONDS = float(os.getenv("CARAPASSA_API_TIMEOUT_SECONDS", "5"))
+CARAPASSA_FACE_STATUS_TIMEOUT_SECONDS = float(
+    os.getenv("CARAPASSA_FACE_STATUS_TIMEOUT_SECONDS", "15")
+)
+CARAPASSA_DELETE_SUBJECT_URL = os.getenv(
+    "CARAPASSA_DELETE_SUBJECT_URL",
+    f"{CARAPASSA_APP_URL.rstrip('/')}/v1/subjects/{{subject_id}}",
+)
+CARAPASSA_DELETE_TIMEOUT_SECONDS = float(
+    os.getenv("CARAPASSA_DELETE_TIMEOUT_SECONDS", "30")
+)

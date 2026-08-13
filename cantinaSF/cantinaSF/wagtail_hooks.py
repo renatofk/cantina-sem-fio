@@ -1,6 +1,6 @@
 
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
-from .models import Student, Course, Meal, History, Transaction
+from .models import CaraPassaDevice, CaraPassaEvent, Student, Course, Meal, History, Transaction
 # em wagtail_hooks.py
 from django.utils.html import format_html
 from django.templatetags.static import static
@@ -9,7 +9,9 @@ from wagtail import hooks
 from django.urls import reverse
 from django.utils.html import format_html
 from wagtail import hooks
-from wagtail_modeladmin.views import CreateView, EditView
+from wagtail_modeladmin.views import CreateView, DeleteView, EditView
+from django.contrib import messages
+from django.shortcuts import redirect
 from django.db.models import Q
 from .forms import TransactionForm, StudentForm
 from django import forms
@@ -17,6 +19,9 @@ from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 from django.utils.safestring import SafeString
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+from urllib.parse import urlencode
+from .carapassa_client import CaraPassaSubjectDeletionError, delete_subject
 
 @hooks.register('insert_global_admin_css')
 def global_admin_css():
@@ -28,8 +33,9 @@ def global_admin_css():
 @hooks.register('insert_global_admin_js')
 def hide_help_menu_js():
     return format_html(
-        '<script src="{}"></script>',
-        static('js/hide_help_menu.js')
+        '<script src="{}"></script><script src="{}"></script>',
+        static('js/hide_help_menu.js'),
+        static('js/carapassa_capture.js'),
     )
 
 @hooks.register('insert_editor_js')
@@ -87,6 +93,19 @@ class StudentEditView(EditView):
     def form_valid(self, form):
         form.instance.user = self.instance.user # Mantém o usuário original
         return super().form_valid(form)
+
+
+class StudentDeleteView(DeleteView):
+    def delete_instance(self):
+        delete_subject(self.instance.integration_id)
+        super().delete_instance()
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return super().post(request, *args, **kwargs)
+        except CaraPassaSubjectDeletionError as exc:
+            messages.error(request, str(exc))
+            return redirect(self.index_url)
     
 
 class StudentAdmin(ModelAdmin):
@@ -98,6 +117,7 @@ class StudentAdmin(ModelAdmin):
     search_fields = ('name', 'last_name')
     create_view_class = StudentCreateView
     edit_view_class = StudentEditView
+    delete_view_class = StudentDeleteView
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -106,13 +126,22 @@ class StudentAdmin(ModelAdmin):
         return qs
 
     def capture_button(self, obj):
-        return format_html('''
-            <form action="https://captura.cantinasemfila.com.br/camera" method="post" target="_blank" id="form_{0}">
-                <input type="hidden" name="student_id" value="{0}" />
-                <input type="hidden" name="student_name" value="{1}" />
-                <button type="submit" class="button button-small">Capturar Foto</button>
-            </form>
-        ''', obj.id, obj.name)
+        capture_url = f"{settings.CARAPASSA_APP_URL.rstrip('/')}/captura"
+        button_label = "Verificando foto..."
+        query = urlencode({
+            "api_key": settings.CARAPASSA_API_KEY,
+            "subject_id": str(obj.integration_id),
+        })
+        return format_html(
+            '<a href="{}?{}" target="_blank" '
+            'rel="noreferrer" class="button button-small js-carapassa-capture" '
+            'data-subject-id="{}" data-status-url="{}" data-carapassa-origin="{}">{}</a>',
+            capture_url, query,
+            obj.integration_id,
+            reverse("carapassa_face_status"),
+            settings.CARAPASSA_APP_URL.rstrip('/'),
+            button_label,
+        )
 
     capture_button.short_description = "Captura"
 
@@ -200,6 +229,33 @@ class TransactionAdmin(ModelAdmin):
                 Q(history__student__user=request.user)
             )
         return qs
+
+
+class CaraPassaDeviceAdmin(ModelAdmin):
+    model = CaraPassaDevice
+    menu_label = "Dispositivos CaraPassa"
+    menu_icon = "site"
+    list_display = ("name", "tenant_id", "school_id", "device_id", "active")
+    search_fields = ("name", "tenant_id", "school_id", "device_id")
+
+
+class CaraPassaEventAdmin(ModelAdmin):
+    model = CaraPassaEvent
+    menu_label = "Eventos CaraPassa"
+    menu_icon = "view"
+    list_display = ("event_id", "student", "device_mapping", "processing_status", "occurred_at")
+    list_filter = ("processing_status",)
+    search_fields = ("event_id", "subject_id", "device_id", "processing_error")
+    inspect_view_enabled = True
+    create_view_enabled = False
+    edit_view_enabled = False
+    delete_view_enabled = False
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.groups.filter(id=3).exists():
+            return qs.filter(student__user=request.user)
+        return qs
     
 class CustomParentHistoryPanel:
     order = 100
@@ -227,8 +283,37 @@ class CustomParentHistoryPanel:
         from django.forms.widgets import Media
         return Media()
 
+
+class CaraPassaRecognitionPanel:
+    order = -100
+
+    def __init__(self, request):
+        self.request = request
+
+    def render_html(self, parent_context):
+        recognition_url = ""
+        if settings.CARAPASSA_API_KEY:
+            recognition_url = (
+                f"{settings.CARAPASSA_APP_URL.rstrip('/')}"
+                f"?{urlencode({'api_key': settings.CARAPASSA_API_KEY})}"
+            )
+        return render_to_string(
+            "dashboard/carapassa_recognition_panel.html",
+            {"recognition_url": recognition_url},
+            request=self.request,
+        )
+
+    @property
+    def media(self):
+        from django.forms.widgets import Media
+        return Media()
+
+
 @hooks.register('construct_homepage_panels')
 def add_custom_history_panel(request, panels):
+    # Responsáveis não devem receber a chave do dispositivo de reconhecimento.
+    if not request.user.groups.filter(id=3).exists():
+        panels.insert(0, CaraPassaRecognitionPanel(request))
     panels.append(CustomParentHistoryPanel(request))
 
 modeladmin_register(StudentAdmin)
@@ -236,5 +321,5 @@ modeladmin_register(CourseAdmin)
 modeladmin_register(MealAdmin)
 modeladmin_register(HistoryAdmin)
 modeladmin_register(TransactionAdmin)
-
-
+modeladmin_register(CaraPassaDeviceAdmin)
+modeladmin_register(CaraPassaEventAdmin)

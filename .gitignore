@@ -3,3 +3,6 @@ cantinaSF/static/
 cantinaSF/certs/
 .env
 Pipfile.lock
+.venv/
+__pycache__/
+*.py[cod]
